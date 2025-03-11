@@ -60,6 +60,7 @@ var (
 	results             = cli.Flag("results", "Specifies which type(s) of results to output: verified, unknown, unverified, filtered_unverified. Defaults to all types.").String()
 
 	allowVerificationOverlap   = cli.Flag("allow-verification-overlap", "Allow verification of similar credentials across detectors").Bool()
+	retainFalsePositives       = cli.Flag("retain-false-positives", "Dont filter unverified common false positive").Bool()
 	filterUnverified           = cli.Flag("filter-unverified", "Only output first unverified result per chunk per detector if there are more than one results.").Bool()
 	filterEntropy              = cli.Flag("filter-entropy", "Filter unverified results with Shannon entropy. Start with 3.0.").Float64()
 	scanEntireChunk            = cli.Flag("scan-entire-chunk", "Scan the entire chunk for secrets.").Hidden().Default("false").Bool()
@@ -511,6 +512,7 @@ func run(state overseer.State) {
 		// subtractive.
 		Detectors:                append(defaults.DefaultDetectors(), conf.Detectors...),
 		Verify:                   !*noVerification,
+		LogFilteredUnverified:    *retainFalsePositives,
 		IncludeDetectors:         *includeDetectors,
 		ExcludeDetectors:         *excludeDetectors,
 		CustomVerifiersOnly:      *customVerifiersOnly,
